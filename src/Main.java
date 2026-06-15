@@ -7,6 +7,7 @@ import java.util.Scanner;
 class Main{
     public Map<String ,Pracownik > listaUzytkownikow; //id pracownik(haslo)
     public Scanner scanner;
+    private final String FILEUZYTKOWNICY = "uzytkownicy.txt";
     public static void main(String[] args) {
         Main aplikacja = new Main();
         aplikacja.listaUzytkownikow = new HashMap<>();
@@ -17,7 +18,7 @@ class Main{
     }
     public boolean getFromFileListaUzytkownikow(){
         try{
-            Scanner scanner = new Scanner(new File("uzytkownicy.txt"));
+            Scanner scanner = new Scanner(new File(FILEUZYTKOWNICY));
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 String[] parts = line.split("\\|");
@@ -33,7 +34,7 @@ class Main{
         }
     }
     public void tworzeniePlikuZPracownikami(){
-        File plik = new File("uzytkownicy.txt");
+        File plik = new File(FILEUZYTKOWNICY);
         try {
             plik.createNewFile();
         }catch(Exception e){
@@ -49,7 +50,12 @@ class Main{
         System.out.println("Podaj nazwisko:");
         nazwisko = scanner.nextLine();
         System.out.println("Podaj haslo:");
-        haslo = scanner.nextLine();
+        while(true) {
+            haslo = scanner.nextLine();
+            if(!haslo.equals("quit"))
+                break;
+            System.out.println("Haslem nie moze byc quit");
+        }
         System.out.println("Podaj id:");
         while(true){
             id = scanner.nextLine();
@@ -60,7 +66,7 @@ class Main{
         }
         Pracownik pracownik = new Pracownik(imie,nazwisko,id,haslo);
         listaUzytkownikow.put(id,pracownik);
-        File plik = new File("uzytkownicy.txt");
+        File plik = new File(FILEUZYTKOWNICY);
         try{
             PrintWriter printWriter = new PrintWriter(new java.io.FileWriter(plik, true)); //true czyli append
             printWriter.println(imie+"|"+nazwisko+"|"+id+"|"+haslo);
@@ -81,12 +87,15 @@ class Main{
             }
             System.out.println("Podane id nie istnieje, podaj inne");
         }
-        System.out.println("Podaj haslo:");
+        System.out.println("Podaj haslo, lub wpisz quit zeby wyjsc");
         String haslo;
         while(true){
             haslo = scanner.nextLine();
             if(haslo.equals(listaUzytkownikow.get(id).getHaslo())){
                 break;
+            }
+            else if(haslo.equals("quit")){
+                return null;
             }
             System.out.println("Niepoprawne haslo, sprobuj jeszcze raz");
         }
