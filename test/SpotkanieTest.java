@@ -11,4 +11,11 @@ class SpotkanieTest {
         assertEquals(oczekiwanaData, spotkanie.getCzasSpotkania());
         assertEquals("Spotkanie testowe",spotkanie.getNazwaSpotkania());
     }
+    @Test
+    void sprawdzanieDodawaniaSaliDoSpotkania() {
+        LocalDateTime data = LocalDateTime.of(2026, 6, 15, 14, 30);
+        Spotkanie spotkanie = new Spotkanie(data, "Daily Scrum");
+        Sala sala = new Sala("F104", 30);
+        spotkanie.setSala(sala);
+        assertEquals("14:30", spotkanie.getGodzinaRozpoczecia());    }
 }
