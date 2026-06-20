@@ -24,4 +24,9 @@ public class Miejsce {
         this.rezerwacjaID = rezerwacjaID;
         this.zajete = true;
     }
+
+    public void usunRezerwacje(){
+        this.rezerwacjaID = null;
+        this.zajete = false;
+    }
 }

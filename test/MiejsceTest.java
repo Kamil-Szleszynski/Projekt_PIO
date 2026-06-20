@@ -22,4 +22,13 @@ class MiejsceTest {
         assertEquals(true,miejsce.isZajete());
 
     }
+    @Test
+    void sprawdzenieUswaniaRezerwacji(){
+        Miejsce miejsce = new Miejsce(12);
+        miejsce.setRezerwacjaID("2");
+        miejsce.usunRezerwacje();
+        assertEquals(null,miejsce.getRezerwacjaID());
+        assertEquals(false,miejsce.isZajete());
+
+    }
 }
