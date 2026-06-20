@@ -15,6 +15,9 @@ class MainTest {
     private File plikBazy;
     LocalDateTime data = LocalDateTime.of(2026, 6, 15, 14, 30);
     Spotkanie spotkanieTest = new Spotkanie(data, "Daily Scrum");
+    Pracownik pracownik = new Pracownik("Jan", "Nowak", "1","1241");
+    Sala E1 = new Sala("E1",30);
+
     @BeforeEach
     void setUp() {
         aplikacja = new Main();
@@ -84,5 +87,60 @@ class MainTest {
         Pracownik oczekiwanyPracownik = aplikacja.listaUzytkownikow.get("101");
         assertTrue(spotkanieTest.getUczestnicy().contains(oczekiwanyPracownik),
                 "Jan powinien znajdować się na liście uczestników.");
+    }
+    @Test
+    void testMiejsceWolne() {
+        String simulatedInput = "3\nquit\n";
+        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
+        Scanner scanner = new Scanner(System.in);
+
+        spotkanieTest.setSala(E1);
+
+        aplikacja.rezerwujMiejsce(spotkanieTest, scanner, pracownik);
+
+        Miejsce trzecieMiejsce = spotkanieTest.getMiejsca().get(2);
+        assertTrue(trzecieMiejsce.isZajete(), "Miejsce 3 powinno być zajete");
+        assertEquals("1", trzecieMiejsce.getRezerwacjaID(), "Id rezerwacji nie zgadza się z użytkownikiem");
+        assertTrue(spotkanieTest.getUczestnicy().contains(pracownik), "Pracownik powinien być uczestnikiem");
+    }
+
+    @Test
+    void testMiejsceZajete() {
+        spotkanieTest.setSala(E1);
+        String inputAnna = "2\nquit\n";
+        System.setIn(new ByteArrayInputStream(inputAnna.getBytes()));
+        Scanner scanner1 = new Scanner(System.in);
+
+        Pracownik pracownik2 = new Pracownik("Anna", "Nowak", "3", "hasloAnna");
+        aplikacja.rezerwujMiejsce(spotkanieTest, scanner1, pracownik2);
+
+        Miejsce drugieMiejsce = spotkanieTest.getMiejsca().get(1);
+        assertTrue(drugieMiejsce.isZajete());
+
+        String inputPracownik = "2\n4\nquit\n";
+        System.setIn(new ByteArrayInputStream(inputPracownik.getBytes()));
+        Scanner scanner2 = new Scanner(System.in);
+
+        aplikacja.rezerwujMiejsce(spotkanieTest, scanner2, pracownik);
+        Miejsce czwarteMiejsce = spotkanieTest.getMiejsca().get(3);
+
+        assertEquals(pracownik2.getId(), drugieMiejsce.getRezerwacjaID(), "MIejsce  powinno byc zerezerwowanie");
+
+        assertTrue(czwarteMiejsce.isZajete(), "pracownik powinien rezerwoac miejsce nr 4");
+        assertEquals(pracownik.getId(), czwarteMiejsce.getRezerwacjaID(), "MIejsce 4 nie zgadza sie z ID pracownika");
+    }
+
+    @Test
+    void testZlyInput() {
+        String simulatedInput = "abc\n99\n1\nquit\n";
+        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
+        Scanner scanner = new Scanner(System.in);
+        spotkanieTest.setSala(E1);
+        assertDoesNotThrow(() -> {
+            aplikacja.rezerwujMiejsce(spotkanieTest, scanner, pracownik);
+        });
+
+        Miejsce pierwszeMiejsce = spotkanieTest.getMiejsca().get(0);
+        assertTrue(pierwszeMiejsce.isZajete());
     }
 }

@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -129,6 +130,65 @@ class Main{
                 System.out.println("Pomyślnie dodano: " + wybranyPracownik.getImie() + " " + wybranyPracownik.getNazwisko());
             }
 
+        }
+    }
+
+    public void rezerwujMiejsce(Spotkanie spotkanie, Scanner scanner, Pracownik pracownik) {
+        String input;
+        ArrayList<Miejsce> listaMiejsc = spotkanie.getMiejsca();
+
+
+        if (spotkanie.getSala() == null || listaMiejsc.isEmpty()) {
+            System.out.println("Błąd: To spotkanie nie ma jeszcze przypisanej sali lub miejsc!");
+            return;
+        }
+
+        while (true) {
+            System.out.println("\n--- Rezerwowanie Miejsc ---");
+            System.out.println("Dostępne miejsca w sali (" + spotkanie.getSala().getNumerSali() + "):");
+
+            for (Miejsce m : listaMiejsc) {
+                String stan = m.isZajete() ? "[ZAJĘTE przez ID: " + m.getRezerwacjaID() + "]" : "[WOLNE]";
+                System.out.println("Miejsce nr " + m.getNumerMiejsca() + " - " + stan);
+            }
+
+            System.out.println("\nWpisz numer miejsca, które chcesz zarezerwować (lub wpisz 'quit', aby zakończyć):");
+            input = scanner.nextLine().trim();
+
+            if (input.equalsIgnoreCase("quit")) {
+                System.out.println("Zakończono rezerwację miejsc.");
+                break;
+            }
+
+            try {
+                int numerMiejsca = Integer.parseInt(input);
+                Miejsce wybraneMiejsce = null;
+
+                for (Miejsce m : listaMiejsc) {
+                    if (m.getNumerMiejsca() == numerMiejsca) {
+                        wybraneMiejsce = m;
+                        break;
+                    }
+                }
+
+                if (wybraneMiejsce == null) {
+                    System.out.println("Niepoprawny numer miejsca! Wybierz numer z listy powyżej.");
+                    continue;
+                }
+                if (wybraneMiejsce.isZajete()) {
+                    System.out.println("To miejsce jest już zajęte! Wybierz inne.");
+                    continue;
+                }
+
+                wybraneMiejsce.setRezerwacjaID(pracownik.getId());
+                spotkanie.addUczestnik(pracownik);
+
+                System.out.println("Sukces! Zarezerwowano miejsce nr " + numerMiejsca + " dla " + pracownik.getId());
+                return;
+
+            } catch (NumberFormatException e) {
+                System.out.println("Błąd: Podaj prawidłowy numer lub wpisz 'wyjdz'.");
+            }
         }
     }
 }
