@@ -10,7 +10,7 @@ public class Spotkanie {
     private String nazwaSpotkania;
     private Sala sala;
     private Set<Pracownik> uczestnicy = new HashSet<>();
-    public Pracownik organizator;
+    private Pracownik organizator;
     Spotkanie(LocalDateTime czasSpotkania,String nazwaSpotkania){
         this.czasSpotkania = czasSpotkania;
         this.nazwaSpotkania = nazwaSpotkania;
