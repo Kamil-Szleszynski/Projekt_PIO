@@ -33,4 +33,17 @@ class SpotkanieTest {
         assertEquals(true,spotkanie.addUczestnik(pracownik4));
 
     }
+
+    @Test
+    void sprawdzenieOrganizatora(){
+        LocalDateTime data = LocalDateTime.of(2026, 6, 15, 14, 30);
+        Spotkanie spotkanie = new Spotkanie(data, "Daily Scrum");
+        Pracownik pracownik1 = new Pracownik("Jan", "Nowak", "1","12234241");
+
+        assertEquals(null,spotkanie.getOrganizator());
+
+        spotkanie.setOrganizator(pracownik1);
+
+        assertEquals(pracownik1,spotkanie.getOrganizator());
+    }
 }

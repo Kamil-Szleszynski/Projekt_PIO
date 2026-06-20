@@ -10,6 +10,7 @@ public class Spotkanie {
     private String nazwaSpotkania;
     private Sala sala;
     private Set<Pracownik> uczestnicy = new HashSet<>();
+    public Pracownik organizator;
     Spotkanie(LocalDateTime czasSpotkania,String nazwaSpotkania){
         this.czasSpotkania = czasSpotkania;
         this.nazwaSpotkania = nazwaSpotkania;
@@ -25,6 +26,15 @@ public class Spotkanie {
     public void setSala(Sala sala) {
         this.sala = sala;
     }
+
+    public void setOrganizator(Pracownik organizator){
+        this.organizator = organizator;
+    }
+
+    public Pracownik getOrganizator(){
+        return organizator;
+    }
+
 
     public Sala getSala() {
         return sala;
