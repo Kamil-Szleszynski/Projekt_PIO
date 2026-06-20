@@ -101,4 +101,34 @@ class Main{
         }
         return listaUzytkownikow.get(id);
     }
+
+    public void dodawanieUczestnikow(Scanner scanner, Spotkanie spotkanie) {
+        String inputUzytkownik;
+
+        System.out.println("--- Dodawanie uczestników do spotkania ---");
+        System.out.println("(Wpisz 'quit' aby zakończyć dodawanie osób)");
+
+        while (true) {
+            System.out.println("Podaj ID użytkownika, którego chcesz dodać:");
+            inputUzytkownik = scanner.nextLine();
+
+            if (inputUzytkownik.equalsIgnoreCase("quit")) {
+                System.out.println("Zakończono dodawanie uczestników.");
+                break;
+            }
+
+            if (!listaUzytkownikow.containsKey(inputUzytkownik)) {
+                System.out.println("Użytkownik o ID '" + inputUzytkownik + "' nie istnieje w bazie danych! Spróbuj ponownie.");
+                continue;
+            }
+
+            Pracownik wybranyPracownik = listaUzytkownikow.get(inputUzytkownik);
+            if ( !spotkanie.addUczestnik(wybranyPracownik) ) {
+                System.out.println(wybranyPracownik.getImie() + " już znajduje się na liście uczestników tego spotkania.");
+            } else {
+                System.out.println("Pomyślnie dodano: " + wybranyPracownik.getImie() + " " + wybranyPracownik.getNazwisko());
+            }
+
+        }
+    }
 }
