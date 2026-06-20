@@ -11,6 +11,7 @@ public class Spotkanie {
     private Sala sala;
     private Set<Pracownik> uczestnicy = new HashSet<>();
     private Pracownik organizator;
+    private ArrayList<Miejsce> miejsca = new ArrayList<>();
     Spotkanie(LocalDateTime czasSpotkania,String nazwaSpotkania){
         this.czasSpotkania = czasSpotkania;
         this.nazwaSpotkania = nazwaSpotkania;
@@ -25,6 +26,12 @@ public class Spotkanie {
 
     public void setSala(Sala sala) {
         this.sala = sala;
+        int liczbaMiejsc = sala.getLiczbaMiejsc();
+        for(int i = 0; i < liczbaMiejsc;i++){
+            Miejsce miejsceDoDodania = new Miejsce(i+1);
+            miejsca.add(miejsceDoDodania);
+        }
+
     }
 
     public void setOrganizator(Pracownik organizator){
@@ -55,5 +62,9 @@ public class Spotkanie {
 
     public Set<Pracownik> getUczestnicy() {
         return uczestnicy;
+    }
+
+    public ArrayList<Miejsce> getMiejsca() {
+        return miejsca;
     }
 }

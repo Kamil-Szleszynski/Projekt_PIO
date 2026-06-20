@@ -46,4 +46,16 @@ class SpotkanieTest {
 
         assertEquals(pracownik1,spotkanie.getOrganizator());
     }
+
+    @Test
+    void sprawdzenieDodawaniaMiejcs(){
+        LocalDateTime data = LocalDateTime.of(2026, 6, 15, 14, 30);
+        Spotkanie spotkanie = new Spotkanie(data, "Daily Scrum");
+        Sala salaE1 = new Sala("E1",30);
+        spotkanie.setSala(salaE1);
+
+        for(int i = 0;i<30;i++){
+            assertEquals(i+1,spotkanie.getMiejsca().get(i).getNumerMiejsca());
+        }
+    }
 }

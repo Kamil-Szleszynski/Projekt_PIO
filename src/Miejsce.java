@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class Miejsce {
     private int numerMiejsca;
     private boolean zajete;
@@ -28,5 +30,17 @@ public class Miejsce {
     public void usunRezerwacje(){
         this.rezerwacjaID = null;
         this.zajete = false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Miejsce miejsce = (Miejsce) o;
+        return getNumerMiejsca() == miejsce.getNumerMiejsca();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getNumerMiejsca());
     }
 }
