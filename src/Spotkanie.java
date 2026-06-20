@@ -52,4 +52,8 @@ public class Spotkanie {
             return true;
         }
     }
+
+    public Set<Pracownik> getUczestnicy() {
+        return uczestnicy;
+    }
 }
