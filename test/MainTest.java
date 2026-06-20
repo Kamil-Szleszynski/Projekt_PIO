@@ -3,6 +3,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -60,5 +61,28 @@ class MainTest {
 
         assertTrue(spotkanieTest.getUczestnicy().isEmpty(),
                 "Lista uczestników powinna być pusta po podaniu nieistniejącego ID.");
+    }
+    @Test
+    void testUczestnikOK_UczestnikwSpotkaniu() {
+        try (PrintWriter writer = new PrintWriter(plikBazy)) {
+            writer.println("Jan|Kowalski|101|haslo1");
+        } catch (Exception e) {
+            fail("Nie udało się przygotować pliku bazy do testu");
+        }
+
+        aplikacja.getFromFileListaUzytkownikow();
+        String simulatedInput = "101" + System.lineSeparator() +
+                "101" + System.lineSeparator() +
+                "quit" + System.lineSeparator();
+        ByteArrayInputStream in = new ByteArrayInputStream(simulatedInput.getBytes());
+        Scanner testScanner = new Scanner(in);
+
+        aplikacja.dodawanieUczestnikow(testScanner, spotkanieTest);
+        assertEquals(1, spotkanieTest.getUczestnicy().size(),
+                "Spotkanie powinno mieć dokładnie 1 uczestnika.");
+
+        Pracownik oczekiwanyPracownik = aplikacja.listaUzytkownikow.get("101");
+        assertTrue(spotkanieTest.getUczestnicy().contains(oczekiwanyPracownik),
+                "Jan powinien znajdować się na liście uczestników.");
     }
 }

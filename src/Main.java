@@ -122,6 +122,12 @@ class Main{
                 continue;
             }
 
+            Pracownik wybranyPracownik = listaUzytkownikow.get(inputUzytkownik);
+            if ( !spotkanie.addUczestnik(wybranyPracownik) ) {
+                System.out.println(wybranyPracownik.getImie() + " już znajduje się na liście uczestników tego spotkania.");
+            } else {
+                System.out.println("Pomyślnie dodano: " + wybranyPracownik.getImie() + " " + wybranyPracownik.getNazwisko());
+            }
 
         }
     }
