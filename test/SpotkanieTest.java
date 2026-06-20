@@ -17,6 +17,5 @@ class SpotkanieTest {
         Spotkanie spotkanie = new Spotkanie(data, "Daily Scrum");
         Sala sala = new Sala("F104", 30);
         spotkanie.setSala(sala);
-        assertEquals(sala, spotkanie.getSala());
-    }
+        assertEquals("14:30", spotkanie.getGodzinaRozpoczecia());    }
 }

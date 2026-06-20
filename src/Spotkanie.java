@@ -24,4 +24,9 @@ public class Spotkanie {
     public Sala getSala() {
         return sala;
     }
+
+    public String getGodzinaRozpoczecia() {
+        if (this.czasSpotkania == null) return "";
+        return String.format("%02d:%02d", czasSpotkania.getHour(), czasSpotkania.getMinute());
+    }
 }
