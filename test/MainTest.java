@@ -164,4 +164,25 @@ class MainTest {
         Spotkanie wybrane = aplikacja.wybierzSpotkanie(prostyScanner);
         assertNull(wybrane, "Wpisanie 'quit' powinno zwrócić null (anulowanie rezerwacji)");
     }
+    @Test
+    void testOdczytywaniaSpotkanZPliku() {
+        File plikTestowy = new File("test_odczyt.txt");
+
+        try (PrintWriter writer = new PrintWriter(plikTestowy)) {
+            writer.println("Test Odczytu;2026-06-22T12:00:00;E105;25;BRAK");
+        } catch (Exception e) {
+            fail("Nie udało się przygotować pliku testowego");
+        }
+
+        boolean wynikOdczytu = aplikacja.getFromFileListaSpotkan("test_odczyt.txt");
+
+        assertTrue(wynikOdczytu, "Metoda odczytu powinna zwrócić true");
+        assertEquals(1, aplikacja.listaSpotkan.size());
+
+        Spotkanie odczytane = aplikacja.listaSpotkan.get(0);
+        assertEquals("Test Odczytu", odczytane.getNazwaSpotkania());
+        assertEquals("E105", odczytane.getSala().getNumerSali());
+
+        plikTestowy.delete();
+    }
 }
