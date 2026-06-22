@@ -197,4 +197,41 @@ class MainTest {
         Spotkanie wybrane = aplikacja.wybierzSpotkanie(prostyScanner);
         assertNull(wybrane, "Wpisanie 'quit' powinno zwrócić null (anulowanie rezerwacji)");
     }
+    @Test
+    void testOdczytywaniaSpotkanZPliku() {
+        File plikTestowy = new File("test_odczyt.txt");
+
+        try (PrintWriter writer = new PrintWriter(plikTestowy)) {
+            writer.println("Test Odczytu;2026-06-22T12:00:00;E105;25;BRAK");
+        } catch (Exception e) {
+            fail("Nie udało się przygotować pliku testowego");
+        }
+
+        boolean wynikOdczytu = aplikacja.getFromFileListaSpotkan("test_odczyt.txt");
+
+        assertTrue(wynikOdczytu, "Metoda odczytu powinna zwrócić true");
+        assertEquals(1, aplikacja.listaSpotkan.size());
+
+        Spotkanie odczytane = aplikacja.listaSpotkan.get(0);
+        assertEquals("Test Odczytu", odczytane.getNazwaSpotkania());
+        assertEquals("E105", odczytane.getSala().getNumerSali());
+
+        plikTestowy.delete();
+    }
+    @Test
+    void testZapisywaniaSpotkanDoPliku() {
+        File plikTestowy = new File("test_zapis.txt");
+        if (plikTestowy.exists()) plikTestowy.delete();
+
+        Spotkanie spotkanie = new Spotkanie(LocalDateTime.of(2026, 6, 22, 10, 0), "Test Zapisu");
+        spotkanie.setSala(new Sala("F104", 30));
+        aplikacja.listaSpotkan.add(spotkanie);
+
+        boolean wynikZapisu = aplikacja.saveToFileListaSpotkan("test_zapis.txt");
+
+        assertTrue(wynikZapisu, "Metoda zapisu powinna zwrócić true");
+        assertTrue(plikTestowy.exists(), "Plik 'test_zapis.txt' powinien zostać fizycznie utworzony");
+
+        //plikTestowy.delete();
+    }
 }

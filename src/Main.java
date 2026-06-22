@@ -10,6 +10,7 @@ class Main {
     public Scanner scanner;
     private final String FILEUZYTKOWNICY = "uzytkownicy.txt";
     public ArrayList<Spotkanie> listaSpotkan;
+    private final String FILESPOTKANIA = "spotkania.txt";
     public ArrayList<Sala> listaSal;
     public static void main(String[] args) {
         Main aplikacja = new Main();
@@ -23,7 +24,7 @@ class Main {
             aplikacja.tworzeniePlikuZPracownikami();
         }
         aplikacja.listaSpotkan = new ArrayList<>();
-        /// TODO: Szymon robi funkcje wczytujaca spotkanie, tutaj trzeba zainicjalizowac liste spotkan
+        aplikacja.getFromFileListaSpotkan(aplikacja.FILESPOTKANIA);
         Pracownik pracownik = null;
         while (true) {
             System.out.println("Wpisz 'n' zeby utworzyc nowego uzytkownika lub 'z' aby sie zalogowac");
@@ -349,6 +350,75 @@ class Main {
             } catch (NumberFormatException e) {
                 System.out.println("Błąd: Podaj prawidłowy numer spotkania.");
             }
+        }
+    }
+    public boolean getFromFileListaSpotkan(String nazwaPliku) {
+        try {
+            File plik = new File(nazwaPliku);
+            if (!plik.exists()) {
+                plik.createNewFile();
+                return true;
+            }
+
+            Scanner fileScanner = new Scanner(plik);
+            listaSpotkan.clear();
+
+            java.time.format.DateTimeFormatter formatter =
+                    new java.time.format.DateTimeFormatterBuilder()
+                            .append(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE)
+                            .appendLiteral('T')
+                            .append(java.time.format.DateTimeFormatter.ISO_LOCAL_TIME)
+                            .toFormatter();
+
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine();
+                if (line.trim().isEmpty()) continue;
+
+                String[] parts = line.split(";");
+                String nazwa = parts[0];
+                java.time.LocalDateTime data = java.time.LocalDateTime.parse(parts[1], formatter);
+                String numerSali = parts[2];
+                int liczbaMiejsc = Integer.parseInt(parts[3]);
+                String idOrganizatora = parts[4];
+
+                Spotkanie spotkanie = new Spotkanie(data, nazwa);
+
+                if (!numerSali.equals("BRAK")) {
+                    spotkanie.setSala(new Sala(numerSali, liczbaMiejsc));
+                }
+
+                if (!idOrganizatora.equals("BRAK") && listaUzytkownikow.containsKey(idOrganizatora)) {
+                    spotkanie.setOrganizator(listaUzytkownikow.get(idOrganizatora));
+                }
+
+                listaSpotkan.add(spotkanie);
+            }
+            fileScanner.close();
+            return true;
+        } catch (Exception e) {
+            System.out.println("Błąd podczas odczytu spotkań z pliku!");
+            return false;
+        }
+    }
+    public boolean saveToFileListaSpotkan(String nazwaPliku) {
+        try {
+            File plik = new File(nazwaPliku);
+            PrintWriter printWriter = new PrintWriter(new java.io.PrintWriter(plik));
+
+            for (Spotkanie s : listaSpotkan) {
+                String nazwa = s.getNazwaSpotkania();
+                String data = s.getCzasSpotkania().toString();
+                String numerSali = (s.getSala() != null) ? s.getSala().getNumerSali() : "BRAK";
+                int liczbaMiejsc = (s.getSala() != null) ? s.getSala().getLiczbaMiejsc() : 0;
+                String idOrganizatora = (s.getOrganizator() != null) ? s.getOrganizator().getId() : "BRAK";
+
+                printWriter.println(nazwa + ";" + data + ";" + numerSali + ";" + liczbaMiejsc + ";" + idOrganizatora);
+            }
+            printWriter.close();
+            return true;
+        } catch (Exception e) {
+            System.out.println("Błąd podczas zapisu spotkań do pliku!");
+            return false;
         }
     }
 }
