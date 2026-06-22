@@ -5,7 +5,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,17 +16,23 @@ class MainTest {
 
     private Main aplikacja;
     private File plikBazy;
+    private List<Sala> dostepneSale;
+    private Spotkanie spotkanieTest;
+    private Pracownik pracownik;
+    private Sala E1;
     LocalDateTime data = LocalDateTime.of(2026, 6, 15, 14, 30);
-    Spotkanie spotkanieTest = new Spotkanie(data, "Daily Scrum");
-    Pracownik pracownik = new Pracownik("Jan", "Nowak", "1","1241");
-    Sala E1 = new Sala("E1",30);
 
     @BeforeEach
     void setUp() {
         aplikacja = new Main();
         aplikacja.listaUzytkownikow = new HashMap<>(); // Ręcznie tworzymy czystą mapę
         plikBazy = new File("uzytkownicy.txt");
-
+        E1 = new Sala("E1",30);
+        spotkanieTest = new Spotkanie(data, "Daily Scrum");
+        dostepneSale = new ArrayList<>();
+        dostepneSale.add(E1);
+        dostepneSale.add(new Sala("B-202", 10));
+        pracownik = new Pracownik("Jan", "Nowak", "1","1241");
     }
 
     @AfterEach
@@ -143,4 +152,29 @@ class MainTest {
         Miejsce pierwszeMiejsce = spotkanieTest.getMiejsca().get(0);
         assertTrue(pierwszeMiejsce.isZajete());
     }
+    @Test
+    void testEtap4_SymulacjaInterakcjiZUserem() {
+
+        String userInput = "Daily\n2026-06-22 09:00\n1\n";
+        ByteArrayInputStream in = new ByteArrayInputStream(userInput.getBytes());
+        Scanner scanner = new Scanner(in);
+
+        String nazwa = scanner.nextLine();
+        String dataInput = scanner.nextLine();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime dataCzas = LocalDateTime.parse(dataInput, formatter);
+
+        int wyborSali = scanner.nextInt();
+        Sala wybranaSala = dostepneSale.get(wyborSali - 1);
+
+        Spotkanie spotkanie = new Spotkanie(dataCzas, nazwa);
+        spotkanie.setSala(wybranaSala);
+        spotkanie.setOrganizator(pracownik);
+
+        assertEquals("Daily", spotkanie.getNazwaSpotkania());
+        assertEquals(LocalDateTime.of(2026, 6, 22, 9, 0), spotkanie.getCzasSpotkania());
+        assertEquals("E1", spotkanie.getSala().getNumerSali());
+        assertEquals(30, spotkanie.getMiejsca().size());
+    }
+
 }
