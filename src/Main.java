@@ -280,7 +280,7 @@ class Main {
         noweSpotkanie.setOrganizator(organizator);
         noweSpotkanie.setSala(wybranaSala);
         noweSpotkanie.addUczestnik(organizator);
-
+        listaSpotkan.add(noweSpotkanie);
         System.out.println("\nSukces! Spotkanie zostało utworzone pomyślnie.");
         System.out.println("Nazwa: " + noweSpotkanie.getNazwaSpotkania());
         System.out.println("Data: " + noweSpotkanie.getCzasSpotkania().format(formatter));
@@ -289,7 +289,7 @@ class Main {
         System.out.println("Liczba przygotowanych miejsc siedzących: " + noweSpotkanie.getMiejsca().size());
     }
     public void menu(Pracownik pracownik) {
-        System.out.println("Wybierz akcje");
+        System.out.println("Wybierz akcje (stworz nowe spotkanie | podejrzyj spotkania | rezerwuj miejsce | quit)");
         String wybor = scanner.nextLine();
         if(wybor.equalsIgnoreCase("stworz nowe spotkanie")){
             stwórzSpotkanie(scanner,pracownik,listaSal);
@@ -307,6 +307,7 @@ class Main {
             }
         }
         else if(wybor.equalsIgnoreCase("quit")){
+            saveToFileListaSpotkan(FILESPOTKANIA);
             System.out.println("Zamykanie aplikacji");
             System.exit(0);
         }
