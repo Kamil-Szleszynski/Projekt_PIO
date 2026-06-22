@@ -335,4 +335,25 @@ class Main {
             return false;
         }
     }
+    public boolean saveToFileListaSpotkan(String nazwaPliku) {
+        try {
+            File plik = new File(nazwaPliku);
+            PrintWriter printWriter = new PrintWriter(new java.io.PrintWriter(plik));
+
+            for (Spotkanie s : listaSpotkan) {
+                String nazwa = s.getNazwaSpotkania();
+                String data = s.getCzasSpotkania().toString();
+                String numerSali = (s.getSala() != null) ? s.getSala().getNumerSali() : "BRAK";
+                int liczbaMiejsc = (s.getSala() != null) ? s.getSala().getLiczbaMiejsc() : 0;
+                String idOrganizatora = (s.getOrganizator() != null) ? s.getOrganizator().getId() : "BRAK";
+
+                printWriter.println(nazwa + ";" + data + ";" + numerSali + ";" + liczbaMiejsc + ";" + idOrganizatora);
+            }
+            printWriter.close();
+            return true;
+        } catch (Exception e) {
+            System.out.println("Błąd podczas zapisu spotkań do pliku!");
+            return false;
+        }
+    }
 }

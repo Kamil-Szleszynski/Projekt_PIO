@@ -185,4 +185,20 @@ class MainTest {
 
         plikTestowy.delete();
     }
+    @Test
+    void testZapisywaniaSpotkanDoPliku() {
+        File plikTestowy = new File("test_zapis.txt");
+        if (plikTestowy.exists()) plikTestowy.delete();
+
+        Spotkanie spotkanie = new Spotkanie(LocalDateTime.of(2026, 6, 22, 10, 0), "Test Zapisu");
+        spotkanie.setSala(new Sala("F104", 30));
+        aplikacja.listaSpotkan.add(spotkanie);
+
+        boolean wynikZapisu = aplikacja.saveToFileListaSpotkan("test_zapis.txt");
+
+        assertTrue(wynikZapisu, "Metoda zapisu powinna zwrócić true");
+        assertTrue(plikTestowy.exists(), "Plik 'test_zapis.txt' powinien zostać fizycznie utworzony");
+
+        //plikTestowy.delete();
+    }
 }
