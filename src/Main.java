@@ -1,9 +1,9 @@
 import java.io.File;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.*;
 
 class Main {
     public Map<String, Pracownik> listaUzytkownikow; //id pracownik(haslo)
@@ -11,8 +11,14 @@ class Main {
     private final String FILEUZYTKOWNICY = "uzytkownicy.txt";
     public ArrayList<Spotkanie> listaSpotkan;
     private final String FILESPOTKANIA = "spotkania.txt";
+    public ArrayList<Sala> listaSal;
     public static void main(String[] args) {
         Main aplikacja = new Main();
+        aplikacja.listaSal = new ArrayList<>();
+        Sala sala1 = new Sala("1",20);
+        Sala sala2 = new Sala("2",30);
+        aplikacja.listaSal.add(sala1);
+        aplikacja.listaSal.add(sala2);
         aplikacja.listaUzytkownikow = new HashMap<>();
         if (!aplikacja.getFromFileListaUzytkownikow()) {
             aplikacja.tworzeniePlikuZPracownikami();
@@ -223,11 +229,70 @@ class Main {
         }
     }
 
+    public void stwórzSpotkanie(Scanner scanner, Pracownik organizator, List<Sala> dostepneSale) {
+        System.out.println("---TWORZENIE NOWEGO SPOTKANIA---");
+
+        System.out.print("Podaj nazwę spotkania: ");
+        String nazwa = scanner.nextLine();
+
+        LocalDateTime dataCzas = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        while (dataCzas == null) {
+            System.out.print("Podaj datę i godzinę spotkania (format: RRRR-MM-DD GG:MM, np. 2026-06-25 14:30): ");
+            String dataInput = scanner.nextLine();
+            try {
+                dataCzas = LocalDateTime.parse(dataInput, formatter);
+            } catch (DateTimeParseException e) {
+                System.out.println("Niepoprawny format daty! Spróbuj ponownie.");
+            }
+        }
+
+        if (dostepneSale == null || dostepneSale.isEmpty()) {
+            System.out.println("Błąd: Brak dostępnych sal w systemie. Nie można utworzyć spotkania.");
+            return;
+        }
+
+        System.out.println("\nDostępne sale:");
+        for (int i = 0; i < dostepneSale.size(); i++) {
+            Sala s = dostepneSale.get(i);
+            System.out.printf("[%d] Sala nr: %s (Liczba miejsc: %d)%n", i + 1, s.getNumerSali(), s.getLiczbaMiejsc());
+        }
+
+        Sala wybranaSala = null;
+        while (wybranaSala == null) {
+            System.out.print("Wybierz numer sali z listy: ");
+            if (scanner.hasNextInt()) {
+                int wybor = scanner.nextInt();
+                scanner.nextLine();
+
+                if (wybor > 0 && wybor <= dostepneSale.size()) {
+                    wybranaSala = dostepneSale.get(wybor - 1);
+                } else {
+                    System.out.println("Niepoprawny numer. Wybierz liczbę z zakresu.");
+                }
+            } else {
+                System.out.println("To nie jest liczba!");
+                scanner.nextLine();
+            }
+        }
+        Spotkanie noweSpotkanie = new Spotkanie(dataCzas, nazwa);
+        noweSpotkanie.setOrganizator(organizator);
+        noweSpotkanie.setSala(wybranaSala);
+        noweSpotkanie.addUczestnik(organizator);
+
+        System.out.println("\nSukces! Spotkanie zostało utworzone pomyślnie.");
+        System.out.println("Nazwa: " + noweSpotkanie.getNazwaSpotkania());
+        System.out.println("Data: " + noweSpotkanie.getCzasSpotkania().format(formatter));
+        System.out.println("Sala: " + noweSpotkanie.getSala().getNumerSali());
+        System.out.println("Organizator: " + noweSpotkanie.getOrganizator().getImie() + " " + noweSpotkanie.getOrganizator().getNazwisko());
+        System.out.println("Liczba przygotowanych miejsc siedzących: " + noweSpotkanie.getMiejsca().size());
+    }
     public void menu(Pracownik pracownik) {
         System.out.println("Wybierz akcje");
         String wybor = scanner.nextLine();
         if(wybor.equalsIgnoreCase("stworz nowe spotkanie")){
-        ///TODO: Bartek tworzy funkcje do tworzenia spotkania
+            stwórzSpotkanie(scanner,pracownik,listaSal);
         }
         else if(wybor.equalsIgnoreCase("podejrzyj spotkania")){
             podejrzyjSpotkania();
