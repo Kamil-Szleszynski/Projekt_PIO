@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +22,8 @@ class MainTest {
     @BeforeEach
     void setUp() {
         aplikacja = new Main();
-        aplikacja.listaUzytkownikow = new HashMap<>(); // Ręcznie tworzymy czystą mapę
+        aplikacja.listaUzytkownikow = new HashMap<>();
+        aplikacja.listaSpotkan = new ArrayList<>();
         plikBazy = new File("uzytkownicy.txt");
 
     }
@@ -142,5 +144,24 @@ class MainTest {
 
         Miejsce pierwszeMiejsce = spotkanieTest.getMiejsca().get(0);
         assertTrue(pierwszeMiejsce.isZajete());
+    }
+
+    @Test
+    void testWybierzSpotkaniePoprawnyIndeks() {
+        spotkanieTest.setSala(E1);
+        aplikacja.listaSpotkan.add(spotkanieTest);
+        Scanner prostyScanner = new Scanner("0\n");
+        Spotkanie wybrane = aplikacja.wybierzSpotkanie(prostyScanner);
+        assertNotNull(wybrane);
+        assertEquals("Daily Scrum", wybrane.getNazwaSpotkania());
+    }
+
+    @Test
+    void testWybierzSpotkanieWpisanieQuit() {
+        spotkanieTest.setSala(E1);
+        aplikacja.listaSpotkan.add(spotkanieTest);
+        Scanner prostyScanner = new Scanner("quit\n");
+        Spotkanie wybrane = aplikacja.wybierzSpotkanie(prostyScanner);
+        assertNull(wybrane, "Wpisanie 'quit' powinno zwrócić null (anulowanie rezerwacji)");
     }
 }
