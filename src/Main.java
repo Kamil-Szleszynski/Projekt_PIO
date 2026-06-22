@@ -10,8 +10,14 @@ class Main {
     public Scanner scanner;
     private final String FILEUZYTKOWNICY = "uzytkownicy.txt";
     public ArrayList<Spotkanie> listaSpotkan;
+    public ArrayList<Sala> listaSal;
     public static void main(String[] args) {
         Main aplikacja = new Main();
+        aplikacja.listaSal = new ArrayList<>();
+        Sala sala1 = new Sala("1",20);
+        Sala sala2 = new Sala("2",30);
+        aplikacja.listaSal.add(sala1);
+        aplikacja.listaSal.add(sala2);
         aplikacja.listaUzytkownikow = new HashMap<>();
         if (!aplikacja.getFromFileListaUzytkownikow()) {
             aplikacja.tworzeniePlikuZPracownikami();
@@ -280,11 +286,12 @@ class Main {
         System.out.println("Sala: " + noweSpotkanie.getSala().getNumerSali());
         System.out.println("Organizator: " + noweSpotkanie.getOrganizator().getImie() + " " + noweSpotkanie.getOrganizator().getNazwisko());
         System.out.println("Liczba przygotowanych miejsc siedzących: " + noweSpotkanie.getMiejsca().size());
+    }
     public void menu(Pracownik pracownik) {
         System.out.println("Wybierz akcje");
         String wybor = scanner.nextLine();
         if(wybor.equalsIgnoreCase("stworz nowe spotkanie")){
-        ///TODO: Bartek tworzy funkcje do tworzenia spotkania
+            stwórzSpotkanie(scanner,pracownik,listaSal);
         }
         else if(wybor.equalsIgnoreCase("podejrzyj spotkania")){
             podejrzyjSpotkania();
